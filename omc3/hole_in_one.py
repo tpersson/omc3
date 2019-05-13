@@ -32,7 +32,7 @@ import tbt
 from generic_parser.entrypoint_parser import (entrypoint, EntryPoint, EntryPointParameters,
                                        add_to_arguments, save_options_to_config)
 from utils.contexts import timeit
-
+from itertools import chain
 LOGGER = logging_tools.get_logger(__name__)
 
 DEFAULT_CONFIG_FILENAME = "analysis_{time:s}.ini"
@@ -300,7 +300,11 @@ def _run_harpy(harpy_options):
         tbt_datas = [(tbt.read_tbt(option.files, datatype=option.tbt_datatype), option) for option in all_options]
         for tbt_data, option in tbt_datas:
             lins.extend([handler.run_per_bunch(bunch_data, bunch_options)
-                         for bunch_data, bunch_options in _multibunch(tbt_data, option)])
+                         for bunch_data, bunch_options in (
+                             _multibunch(tbt_data, option) if harpy_options.chunks is None
+                             else chain(*(_chunks(b_data, b_options)
+                                          for b_data, b_options in _multibunch(tbt_data, option)))
+                                                           )])
     return lins
 
 
@@ -323,6 +327,17 @@ def _multibunch(tbt_datas, options):
         new_options.files = join(dirname(options.files), new_file_name)
         yield tbt.TbtData([tbt_datas.matrices[index]], tbt_datas.date,
                       [tbt_datas.bunch_ids[index]], tbt_datas.nturns), new_options
+
+
+def _chunks(tbt_data, options):
+    nturns = int(tbt_data.nturns / options.chunks - 1)
+    for index in range(options.chunks):
+        new_options = deepcopy(options)
+        new_file_name = f"chunk_{index}{basename(new_options.files)}"
+        new_options.files = join(dirname(options.files), new_file_name)
+        yield new_options, tbt.TbtData([{plane: tbt_data.matrices[0][plane].iloc[:, index*nturns:(index + 1)*nturns].T.reset_index(drop=True).T for plane in ("X", "Y")}],
+                                       tbt_data.date,
+                                       tbt_data.bunch_ids, nturns)
 
 
 def _measure_optics(lins, optics_opt):
@@ -371,6 +386,8 @@ def harpy_params():
     params.add_parameter(name="tbt_datatype", default=HARPY_DEFAULTS["tbt_datatype"],
                          choices=list(tbt.handler.DATA_READERS.keys()),
                          help="Choose the datatype from which to import. ")
+    params.add_parameter(name="chunks", type=int,
+                         help="Split turn by turn data into a given number of chunks")
 
     # Cleaning parameters
     params.add_parameter(name="clean", action="store_true",
