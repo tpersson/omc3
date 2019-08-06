@@ -506,7 +506,7 @@ def optics_params():
 
 HARPY_DEFAULTS = {
     "turns": [0, 50000],
-    "unit": "m",
+    "unit": "mm",
     "sing_val": 12,
     "peak_to_peak": 1e-8,
     "max_peak": 0.02,
@@ -514,9 +514,9 @@ HARPY_DEFAULTS = {
     "tolerance": 0.01,
     "tune_clean_limit": 1e-5,
     "window": "hann",
-    "turn_bits": 20,
+    "turn_bits": 18,
     "output_bits": 12,
-    "to_write": ["lin", "bpm_summary"],
+    "to_write": ["lin", "bpm_summary", "spectra"],
     "tbt_datatype": "lhc"
 }
 
