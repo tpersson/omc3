@@ -60,7 +60,6 @@ def measure_optics(input_files, measure_input):
         dispersion.calculate_dispersion(measure_input, input_files, common_header, plane)
         if plane == "X":
             dispersion.calculate_normalised_dispersion(measure_input, input_files, beta_df, common_header)
-
     # coupling.calculate_coupling(measure_input, input_files, phase_dict, tune_dict, common_header)
     if measure_input.nonlinear:
         iotools.create_dirs(os.path.join(measure_input.outputdir, "rdt"))
@@ -121,7 +120,7 @@ class InputFiles(dict):
         read_files = isinstance(files_to_analyse[0], str)
         for file_in in files_to_analyse:
             for plane in PLANES:
-                df_to_load = (tfs.read(f"{file_in}.lin{plane.lower()}").set_index("NAME")
+                df_to_load = (tfs.read(f"{file_in}.lin{plane.lower()}").set_index("NAME", drop=False)
                               if read_files else file_in[plane])
                 self[plane].append(self._repair_backwards_compatible_frame(df_to_load, plane))
 
