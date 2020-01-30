@@ -1,0 +1,349 @@
+! Links definitions
+
+
+set, format="22.14e";
+
+!###################################################################################################################################
+!############################## SET UP TABLE #######################################################################################
+!###################################################################################################################################
+
+CREATE, TABLE=kicks, COLUMN=_TRACKFILENAME, JX, JY, QX, QY;
+
+!###################################################################################################################################
+!############################## SET UP LATTICE 2018 ################################################################################
+!###################################################################################################################################
+call,file="lhc_as-built.seq";
+
+
+MS.22L2.B1,                K2 := ks_mod, polarity=-1;
+MS.18R1.B1,                K2 := ks_mod, polarity=-1;
+
+MSS.30R2.B1,                K2S := kss_mod, polarity=-1;
+MSS.34L3.B1,                K2S := kss_mod, polarity=-1;
+
+MO.24R3.B1,                K3 := ko_mod, polarity=-1;
+MO.30R3.B1,                K3 := ko_mod, polarity=-1;
+
+MQS.23R4.B1,                K1S := kqs_mod, polarity=-1;
+MQS.27L5.B1,                K1S := kqs_mod, polarity=-1;
+
+!  slicefactor=4;
+! beam;
+! call,file="myslice.madx";
+! beam;
+! 		 use,sequence=lhcb1; makethin,sequence=lhcb1, style=teapot, makedipedge=true;
+!      use,sequence=lhcb2; makethin,sequence=lhcb2, style=teapot, makedipedge=true;
+
+
+call, file="opticsfile.1";
+
+
+beam, sequence=lhcb1, bv= 1, energy=NRJ, particle=proton, npart=1.0e10, kbunch=1, ex=7.29767146889e-09,ey=7.29767146889e-09;
+beam, sequence=lhcb2, bv=-1, energy=NRJ, particle=proton, npart=1.0e10, kbunch=1, ex=7.29767146889e-09,ey=7.29767146889e-09;
+
+
+
+USE, SEQUENCE=lhcb1;
+
+!###################################################################################################################################
+!################################ SETUP FOR ORBIT and ERROR CORRECTIONS ############################################################
+!###################################################################################################################################
+on_x1= 0    ; on_sep1= 0 ; on_o1= 0 ;
+on_x2= 0    ; on_sep2= 0 ; on_o2= 0 ; on_oe2=0; on_a2= 0 ;
+on_x5= 0    ; on_sep5= 0 ; on_o5= 0 ;
+on_x8= 0    ; on_sep8= 0 ; on_o8= 0 ; on_a8= 0 ;  on_sep8h= 0 ; on_x8v= 0 ;
+on_alice= 0 ;
+on_sol_alice=0;
+on_lhcb = 0 ;
+on_sol_atlas=0;
+on_sol_cms=0;
+
+  on_x1  :=  0.000  ;
+  on_sep1:=   0  ;
+  on_oh1 :=    0.000  ;
+  on_ov1 :=    0.000  ;
+  phi_IR1:=   90.000  ;
+  on_ssep1:=on_sep1;
+  on_xx1  := on_x1 ;
+  on_x5  :=  0.000  ;
+  on_sep5:=    0.0  ;
+  on_oh5 :=    0.000  ;
+  on_ov5 :=   0.000  ;
+  phi_IR5:=    0.000  ;
+  on_ssep5:=on_sep5;
+  on_xx5  := on_x5 ;
+  on_x2  :=  0.000  ;
+  on_sep2:=    0.000  ;
+  on_a2  :=    0.000  ;
+  on_o2  :=    0.000  ;
+  on_oh2 :=    0.000  ;
+  on_ov2 :=   0.000  ;
+  phi_IR2:=   90.000  ;
+  on_x8  := 0.000  ;
+  on_sep8:=   0.000  ;
+  on_a8  :=    0.000  ;
+  on_o8  :=    0.000  ;
+  on_oh8 :=    0.000  ;
+  on_ov8 :=    0.000  ;
+  phi_IR8:=  180.000  ;
+
+
+!###########################################################################################################################################################################################
+!!###############!! APPLY THE MO
+!###########################################################################################################################################################################################
+MOpoweringb1=0.0;
+  kof.a12b1 := MOpoweringb1 ;
+  kod.a12b1 := MOpoweringb1 ;
+  kof.a23b1 := MOpoweringb1 ;
+  kod.a23b1 := MOpoweringb1 ;
+  kof.a34b1 := MOpoweringb1 ;
+  kod.a34b1 := MOpoweringb1 ;
+  kof.a45b1 := MOpoweringb1 ;
+  kod.a45b1 := MOpoweringb1 ;
+  kof.a56b1 := MOpoweringb1 ;
+  kod.a56b1 := MOpoweringb1*0.775 ;
+  kof.a67b1 := MOpoweringb1 ;
+  kod.a67b1 := MOpoweringb1 ;
+  kof.a78b1 := MOpoweringb1 ;
+  kod.a78b1 := MOpoweringb1 ;
+  kof.a81b1 := MOpoweringb1 ;
+  kod.a81b1 := MOpoweringb1 ;
+MOpoweringb2=0.0;
+  kof.a12b2 := MOpoweringb2 ;
+  kod.a12b2 := MOpoweringb2 ;
+  kof.a23b2 := MOpoweringb2 ;
+  kod.a23b2 := MOpoweringb2 ;
+  kof.a34b2 := MOpoweringb2 ;
+  kod.a34b2 := MOpoweringb2 ;
+  kof.a45b2 := MOpoweringb2 ;
+  kod.a45b2 := MOpoweringb2 ;
+  kof.a56b2 := MOpoweringb2 ;
+  kod.a56b2 := MOpoweringb2 ;
+  kof.a67b2 := MOpoweringb2 ;
+  kod.a67b2 := MOpoweringb2 ;
+  kof.a78b2 := MOpoweringb2 ;
+  kod.a78b2 := MOpoweringb2 ;
+  kof.a81b2 := MOpoweringb2 ;
+  kod.a81b2 := MOpoweringb2 ;
+
+ !MQS BEAM1
+CMRS.b1      :=   0.000000000000E+00 ;
+CMIS.b1      :=   0.000000000000E+00 ;
+CMRS.b1_sq   :=   0.000000000000E+00 ;
+CMIS.b1_sq   :=   0.000000000000E+00 ;
+ona2_b1      :=   0.000000000000E+00 ;
+ KQS.R1B1   :=  (   0.000000000000E+00) * ona2_b1 + ( 0.266278479040E-01) * CMRS.b1 + (-0.899733288016E-02) * CMIS.b1 + ( 0.000000000000E+00) * CMRS.b1_sq + ( 0.000000000000E+00) * CMIS.b1_sq  ;
+ KQS.L2B1   :=  (   0.000000000000E+00) * ona2_b1 + ( 0.266278479040E-01) * CMRS.b1 + (-0.899733288016E-02) * CMIS.b1 + ( 0.000000000000E+00) * CMRS.b1_sq + ( 0.000000000000E+00) * CMIS.b1_sq  ;
+KQS.A23B1   :=  (   0.000000000000E+00) * ona2_b1 + ( 0.142516736842E-01) * CMRS.b1 + ( 0.848602983914E-02) * CMIS.b1 + ( 0.302173156154E-01) * CMRS.b1_sq + ( 0.109843179604E-01) * CMIS.b1_sq  ;
+ KQS.R3B1   :=  (   0.000000000000E+00) * ona2_b1 + (-0.171205193764E-01) * CMRS.b1 + (-0.807870546221E-02) * CMIS.b1 + (-0.402300957758E-01) * CMRS.b1_sq + (-0.822964594698E-02) * CMIS.b1_sq  ;
+ KQS.L4B1   :=  (   0.000000000000E+00) * ona2_b1 + (-0.171205193764E-01) * CMRS.b1 + (-0.807870546221E-02) * CMIS.b1 + (-0.402300957758E-01) * CMRS.b1_sq + (-0.822964594698E-02) * CMIS.b1_sq  ;
+KQS.A45B1   :=  (   0.000000000000E+00) * ona2_b1 + ( 0.113812285983E-01) * CMRS.b1 + ( 0.955159460427E-02) * CMIS.b1 + ( 0.000000000000E+00) * CMRS.b1_sq + ( 0.000000000000E+00) * CMIS.b1_sq  ;
+ KQS.R5B1   :=  (   0.000000000000E+00) * ona2_b1 + ( 0.792323136002E-02) * CMRS.b1 + ( 0.100926247998E-01) * CMIS.b1 + ( 0.000000000000E+00) * CMRS.b1_sq + ( 0.000000000000E+00) * CMIS.b1_sq  ;
+ KQS.L6B1   :=  (   0.000000000000E+00) * ona2_b1 + ( 0.792323136002E-02) * CMRS.b1 + ( 0.100926247998E-01) * CMIS.b1 + ( 0.000000000000E+00) * CMRS.b1_sq + ( 0.000000000000E+00) * CMIS.b1_sq  ;
+KQS.A67B1   :=  (   0.000000000000E+00) * ona2_b1 + (-0.158692136780E-01) * CMRS.b1 + ( 0.106460324212E-01) * CMIS.b1 + (-0.709778694350E-01) * CMRS.b1_sq + ( 0.349381515069E-01) * CMIS.b1_sq  ;
+ KQS.R7B1   :=  (   0.000000000000E+00) * ona2_b1 + (-0.739140462540E-02) * CMRS.b1 + (-0.987710657697E-02) * CMIS.b1 + (-0.549901960504E-02) * CMRS.b1_sq + (-0.185504800255E-01) * CMIS.b1_sq  ;
+ KQS.L8B1   :=  (   0.000000000000E+00) * ona2_b1 + (-0.739140462540E-02) * CMRS.b1 + (-0.987710657697E-02) * CMIS.b1 + (-0.549901960504E-02) * CMRS.b1_sq + (-0.185504800255E-01) * CMIS.b1_sq  ;
+KQS.A81B1   :=  (   0.000000000000E+00) * ona2_b1 + ( 0.241324775639E-01) * CMRS.b1 + (-0.962582146500E-02) * CMIS.b1 + ( 0.000000000000E+00) * CMRS.b1_sq + ( 0.000000000000E+00) * CMIS.b1_sq  ;
+ !MQS BEAM2
+CMRS.b2      :=   0.000000000000E+00 ;
+CMIS.b2      :=   0.000000000000E+00 ;
+CMRS.b2_sq   :=   0.000000000000E+00 ;
+CMIS.b2_sq   :=   0.000000000000E+00 ;
+ona2_b2      :=   0.000000000000E+00 ;
+KQS.A12B2   :=  (   0.519213248459E-03) * ona2_b2 + ( 0.124458484817E-01) * CMRS.b2 + (-0.207596749726E-01) * CMIS.b2 + ( 0.000000000000E+00) * CMRS.b2_sq + ( 0.000000000000E+00) * CMIS.b2_sq  ;
+ KQS.R2B2   :=  (  -0.952785714091E-03) * ona2_b2 + ( 0.121456161967E-01) * CMRS.b2 + ( 0.397509215137E-02) * CMIS.b2 + ( 0.200920340631E-01) * CMRS.b2_sq + ( 0.712846355318E-02) * CMIS.b2_sq  ;
+ KQS.L3B2   :=  (  -0.952785714091E-03) * ona2_b2 + ( 0.121456161967E-01) * CMRS.b2 + ( 0.397509215137E-02) * CMIS.b2 + ( 0.200920340631E-01) * CMRS.b2_sq + ( 0.712846355318E-02) * CMIS.b2_sq  ;
+KQS.A34B2   :=  (  -0.217284900157E-03) * ona2_b2 + (-0.179258964749E-01) * CMRS.b2 + ( 0.371667140033E-02) * CMIS.b2 + (-0.405188393546E-01) * CMRS.b2_sq + ( 0.212647436428E-01) * CMIS.b2_sq  ;
+ KQS.R4B2   :=  (   0.186949354181E-03) * ona2_b2 + ( 0.128662566995E-01) * CMRS.b2 + ( 0.360504223421E-02) * CMIS.b2 + ( 0.000000000000E+00) * CMRS.b2_sq + ( 0.000000000000E+00) * CMIS.b2_sq  ;
+ KQS.L5B2   :=  (   0.186949354181E-03) * ona2_b2 + ( 0.128662566995E-01) * CMRS.b2 + ( 0.360504223421E-02) * CMIS.b2 + ( 0.000000000000E+00) * CMRS.b2_sq + ( 0.000000000000E+00) * CMIS.b2_sq  ;
+KQS.A56B2   :=  (   0.397814910113E-03) * ona2_b2 + ( 0.148124920807E-01) * CMRS.b2 + ( 0.138602241563E-02) * CMIS.b2 + ( 0.000000000000E+00) * CMRS.b2_sq + ( 0.000000000000E+00) * CMIS.b2_sq  ;
+ KQS.R6B2   :=  (  -0.138800614213E-03) * ona2_b2 + (-0.614988295119E-02) * CMRS.b2 + ( 0.179020058982E-01) * CMIS.b2 + (-0.327505145607E-01) * CMRS.b2_sq + ( 0.624417187334E-01) * CMIS.b2_sq  ;
+ KQS.L7B2   :=  (  -0.138800614213E-03) * ona2_b2 + (-0.614988295119E-02) * CMRS.b2 + ( 0.179020058982E-01) * CMIS.b2 + (-0.327505145607E-01) * CMRS.b2_sq + ( 0.624417187334E-01) * CMIS.b2_sq  ;
+KQS.A78B2   :=  (   0.907653646559E-03) * ona2_b2 + (-0.117937801373E-01) * CMRS.b2 + (-0.447830183312E-02) * CMIS.b2 + (-0.188089814503E-01) * CMRS.b2_sq + (-0.897287738080E-02) * CMIS.b2_sq  ;
+ KQS.R8B2   :=  (   0.173286377641E-03) * ona2_b2 + ( 0.144218507771E-01) * CMRS.b2 + (-0.211979276194E-01) * CMIS.b2 + ( 0.000000000000E+00) * CMRS.b2_sq + ( 0.000000000000E+00) * CMIS.b2_sq  ;
+ KQS.L1B2   :=  (   0.173286377641E-03) * ona2_b2 + ( 0.144218507771E-01) * CMRS.b2 + (-0.211979276194E-01) * CMIS.b2 + ( 0.000000000000E+00) * CMRS.b2_sq + ( 0.000000000000E+00) * CMIS.b2_sq  ;
+
+
+ !Strong sextupoles of sectors 81/12/45/56
+KSF1.A81B1  :=0.0;
+KSF1.A12B1  :=0.0;
+KSF1.A45B1  :=0.0;
+KSF1.A56B1  :=0.0;
+KSD2.A81B1  :=0.0;
+KSD2.A12B1  :=0.0;
+KSD2.A45B1  :=0.0;
+KSD2.A56B1  :=0.0;
+
+ !Weak sextupoles of sectors 81/12/45/56
+KSF2.A81B1  :=0.0;
+KSF2.A12B1  :=0.0;
+KSF2.A45B1  :=0.0;
+KSF2.A56B1  :=0.0;
+KSD1.A81B1  :=0.0;
+KSD1.A12B1  :=0.0;
+KSD1.A45B1  :=0.0;
+KSD1.A56B1  :=0.0;
+
+ !Weak sextupoles of sectors 78/23/34/67
+KSF1.A78B1  :=0.0;
+KSF2.A78B1  :=0.0;
+KSF1.A23B1  :=0.0;
+KSF2.A23B1  :=0.0;
+KSF1.A34B1  :=0.0;
+KSF2.A34B1  :=0.0;
+KSF1.A67B1  :=0.0;
+KSF2.A67B1  :=0.0;
+KSD1.A78B1  :=0.0;
+KSD2.A78B1  :=0.0;
+KSD1.A23B1  :=0.0;
+KSD2.A23B1  :=0.0;
+KSD1.A34B1  :=0.0;
+KSD2.A34B1  :=0.0;
+KSD1.A67B1  :=0.0;
+KSD2.A67B1  :=0.0;
+
+
+! Match Tunes
+MATCH;
+  GLOBAL, Q1=62.28, Q2=60.31;
+
+  VARY, NAME=dQx.b1_sq;
+  VARY, NAME=dQy.b1_sq;
+
+  LMDIF, CALLS=100, TOLERANCE=1.0E-21;
+
+ENDMATCH;
+
+
+ks_mo   =   0.75*Kmax_MS/21666  ;
+kss_mo  =   0.75*Kmax_MSS/21666 ;
+ko_mo   =   0.75*Kmax_MO/21666  ;
+kqs_mod =   0.15*Kmax_MQS/21666 ;
+
+
+! Match Tunes
+MATCH;
+  GLOBAL, Q1=62.28, Q2=60.31;
+
+  VARY, NAME=dQx.b1_sq;
+  VARY, NAME=dQy.b1_sq;
+
+  LMDIF, CALLS=100, TOLERANCE=1.0E-21;
+
+ENDMATCH;
+
+TWISS;
+
+CALL, FILE='beta_beat.macros.madx';
+CALL, FILE='lhc.macros.madx';
+CALL, FILE='lhc_runII.macros.madx';
+CALL, FILE='tracking.macros.madx';
+
+
+
+EXEC, define_nominal_beams();
+EXEC, cycle_sequences();
+
+USE, SEQUENCE=lhcb1;
+
+EXEC, do_twiss_monitors(lhcb1, 'twiss.dat', 0.0);
+EXEC, do_twiss_elements(lhcb1, 'twiss_elements.dat', 0.0);
+
+USE, SEQUENCE=lhcb1;
+
+
+SAVEBETA, LABEL=STARTSEQ, PLACE=MSIA.EXIT.B1, SEQUENCE=lhcb1;
+TWISS;
+
+SET, FORMAT='22.14e';
+
+TWISS;
+TRACKFILENAME='track1';
+QX=table(SUMM, Q1);
+QY=table(SUMM, Q2);
+
+    PTC_CREATE_UNIVERSE;
+    PTC_CREATE_LAYOUT, model=3, method=6, nst=10;
+    PTC_ALIGN;
+
+    exec, define_observation_points();
+
+    jx=1E-6;
+    jy=1E-6;
+
+    myx=sqrt(STARTSEQ->BETX*jx);
+    myy=sqrt(STARTSEQ->BETY*jy);
+
+    mypx= -1*sqrt(jx)*(STARTSEQ->ALFX)/SQRT(STARTSEQ->BETX);
+    mypy= -1*sqrt(jy)*(STARTSEQ->ALFY)/SQRT(STARTSEQ->BETY);
+
+
+    PTC_START, x=myx, y=myy, px=mypx, py=mypy;
+    PTC_TRACK, deltap=0.0, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track1.', closed_orbit;
+    PTC_TRACK_END;
+    PTC_END;
+
+FILL, TABLE=kicks, ROW=0;
+
+TWISS;
+TRACKFILENAME='track2';
+QX=table(SUMM, Q1);
+QY=table(SUMM, Q2);
+
+    PTC_CREATE_UNIVERSE;
+    PTC_CREATE_LAYOUT, model=3, method=6, nst=10;
+    PTC_ALIGN;
+
+    exec, define_observation_points();
+
+    jx=2E-6;
+    jy=1E-6;
+
+    myx=sqrt(STARTSEQ->BETX*jx);
+    myy=sqrt(STARTSEQ->BETY*jy);
+
+    mypx= -1*sqrt(jx)*(STARTSEQ->ALFX)/SQRT(STARTSEQ->BETX);
+    mypy= -1*sqrt(jy)*(STARTSEQ->ALFY)/SQRT(STARTSEQ->BETY);
+
+
+    PTC_START, x=myx, y=myy, px=mypx, py=mypy;
+    PTC_TRACK, deltap=0.0, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track2.', closed_orbit;
+    PTC_TRACK_END;
+    PTC_END;
+
+FILL, TABLE=kicks, ROW=0;
+
+TRACKFILENAME='track3';
+QX=table(SUMM, Q1);
+QY=table(SUMM, Q2);
+
+    PTC_CREATE_UNIVERSE;
+    PTC_CREATE_LAYOUT, model=3, method=6, nst=10;
+    PTC_ALIGN;
+
+    exec, define_observation_points();
+
+    jx=1E-6;
+    jy=2E-6;
+
+    myx=sqrt(STARTSEQ->BETX*jx);
+    myy=sqrt(STARTSEQ->BETY*jy);
+
+    mypx= -1*sqrt(jx)*(STARTSEQ->ALFX)/SQRT(STARTSEQ->BETX);
+    mypy= -1*sqrt(jy)*(STARTSEQ->ALFY)/SQRT(STARTSEQ->BETY);
+
+
+    PTC_START, x=myx, y=myy, px=mypx, py=mypy;
+    PTC_TRACK, deltap=0.0, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track3.', closed_orbit;
+    PTC_TRACK_END;
+    PTC_END;
+
+FILL, TABLE=kicks, ROW=0;
+WRITE, TABLE=kicks, FILE="Tracking_actions.tfs";
+
+PTC_CREATE_UNIVERSE;
+PTC_CREATE_LAYOUT, MODEL = 3, METHOD = 6, NST = 1;
+PTC_TWISS, ICASE=6, NO=3, NORMAL=TRUE, TRACKRDTS=TRUE, FILE='ptc_twiss.tfs';
+WRITE, TABLE=twissrdt, file = "ptc_rdt.tfs";
+
+PTC_END;
