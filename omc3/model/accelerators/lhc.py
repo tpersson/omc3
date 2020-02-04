@@ -143,8 +143,8 @@ class Lhc(Accelerator):
         ))
         return _list_intersect_keep_order(vars_by_position, vars_by_class)
 
-    @classmethod
-    def get_ips(cls):
+
+    def get_ips(self):
         """ Returns an iterable with this accelerator IPs.
 
         Returns:
@@ -153,11 +153,11 @@ class Lhc(Accelerator):
         """
         for ip in Lhc.LHC_IPS:
             yield ("IP{}".format(ip),
-                   Lhc.NORMAL_IP_BPMS.format(side="L", ip=ip, beam=cls.beam),
-                   Lhc.NORMAL_IP_BPMS.format(side="R", ip=ip, beam=cls.beam))
+                   Lhc.NORMAL_IP_BPMS.format(side="L", ip=ip, beam=self.beam),
+                   Lhc.NORMAL_IP_BPMS.format(side="R", ip=ip, beam=self.beam))
             yield ("IP{}_DOROS".format(ip),
-                   Lhc.DOROS_IP_BPMS.format(side="L", ip=ip, beam=cls.beam),
-                   Lhc.DOROS_IP_BPMS.format(side="R", ip=ip, beam=cls.beam))
+                   Lhc.DOROS_IP_BPMS.format(side="L", ip=ip, beam=self.beam),
+                   Lhc.DOROS_IP_BPMS.format(side="R", ip=ip, beam=self.beam))
 
     def log_status(self):
         LOGGER.info(f"  model dir = {self.model_dir}")

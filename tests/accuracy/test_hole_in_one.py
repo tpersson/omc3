@@ -1,7 +1,7 @@
 from os.path import abspath, dirname, join, isdir
 from shutil import rmtree
 import glob
-from functools import partial
+import tfs
 from omc3.hole_in_one import hole_in_one_entrypoint
 from omc3.madx_wrapper import main as madx_run
 
@@ -87,15 +87,27 @@ def test_hole_in_one():
 
     hole_in_one_entrypoint({**harpy_opt, **clean_opt, **fft_opt, **optics_opt, **model_opt})
 
+    # check if all optics measuremetnts files are present
     check_if_all_files_present(RESULTS_PATH,
                                OPTICS_MEASUREMENTS_RESULTS_FILES)
 
+    # check if all files from harmonic analysis are present
     check_if_all_files_present(join(RESULTS_PATH, 'lin_files'),
                                [harpyfiles.format(track=track) for track in TRACK_FILES
                                                                for harpyfiles in HARPY_RESULTS_FILES])
 
+    # check if all files from RDT analysis are present
     [check_if_all_files_present(join(RESULTS_PATH, 'rdt', multipole), RDT_RESULT_FILES[multipole])
      for multipole in RDT_RESULT_FILES.keys()]
+
+    # check if all files from optics measurements are not empty
+    check_if_files_are_not_empty(RESULTS_PATH, ('.txt'))
+
+    # check if all files from harmonic analysis are not empty
+    check_if_files_are_not_empty(join(RESULTS_PATH, 'lin_files'), ('.bad_bpms_x', '.bad_bpms_y'))
+
+    # check if all files from optics measurements are not empty
+    [check_if_files_are_not_empty(join(RESULTS_PATH, 'rdt', multipole)) for multipole in RDT_RESULT_FILES.keys()]
 
     _clean_up(RESULTS_PATH)
 
@@ -106,9 +118,16 @@ def get_all_files_in_dir(path='', fileext=["."]):
 
 def check_if_all_files_present(resultpath, resultfiles):
     generated_results_files = get_all_files_in_dir(resultpath, MEASUREMENT_FILES_EXTENSIONS)
-    test_results_files = [join(resultpath, filename.format(plane=plane)) for plane in PLANES for filename in resultfiles]
-
+    test_results_files = [join(resultpath, filename.format(plane=plane)) for plane in PLANES
+                                                                        for filename in resultfiles]
     assert set(generated_results_files) == set(test_results_files)
+
+
+def check_if_files_are_not_empty(resultpath, exclude_extension=()):
+    generated_results_files = get_all_files_in_dir(resultpath, MEASUREMENT_FILES_EXTENSIONS)
+    for f in generated_results_files:
+        if not f.endswith(exclude_extension):
+            assert not tfs.read(f).empty
 
 
 def _clean_up(path_dir):

@@ -4,12 +4,6 @@
 set, format="22.14e";
 
 !###################################################################################################################################
-!############################## SET UP TABLE #######################################################################################
-!###################################################################################################################################
-
-CREATE, TABLE=kicks, COLUMN=_TRACKFILENAME, JX, JY, QX, QY;
-
-!###################################################################################################################################
 !############################## SET UP LATTICE 2018 ################################################################################
 !###################################################################################################################################
 call,file="lhc_as-built.seq";
@@ -255,12 +249,13 @@ USE, SEQUENCE=lhcb1;
 SAVEBETA, LABEL=STARTSEQ, PLACE=MSIA.EXIT.B1, SEQUENCE=lhcb1;
 TWISS;
 
-SET, FORMAT='22.14e';
+CREATE, TABLE=kicks, COLUMN=_TRACKFILENAME, JX, JY, QX, QY, DPP;
 
 TWISS;
 TRACKFILENAME='track1';
 QX=table(SUMM, Q1);
 QY=table(SUMM, Q2);
+DPP=0.0;
 
     PTC_CREATE_UNIVERSE;
     PTC_CREATE_LAYOUT, model=3, method=6, nst=10;
@@ -279,7 +274,7 @@ QY=table(SUMM, Q2);
 
 
     PTC_START, x=myx, y=myy, px=mypx, py=mypy;
-    PTC_TRACK, deltap=0.0, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track1.', closed_orbit;
+    PTC_TRACK, deltap=DPP, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track1.', closed_orbit;
     PTC_TRACK_END;
     PTC_END;
 
@@ -289,6 +284,7 @@ TWISS;
 TRACKFILENAME='track2';
 QX=table(SUMM, Q1);
 QY=table(SUMM, Q2);
+DPP=0.0;
 
     PTC_CREATE_UNIVERSE;
     PTC_CREATE_LAYOUT, model=3, method=6, nst=10;
@@ -307,15 +303,17 @@ QY=table(SUMM, Q2);
 
 
     PTC_START, x=myx, y=myy, px=mypx, py=mypy;
-    PTC_TRACK, deltap=0.0, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track2.', closed_orbit;
+    PTC_TRACK, deltap=DPP, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track2.', closed_orbit;
     PTC_TRACK_END;
     PTC_END;
 
 FILL, TABLE=kicks, ROW=0;
 
+TWISS;
 TRACKFILENAME='track3';
 QX=table(SUMM, Q1);
 QY=table(SUMM, Q2);
+DPP=0.0;
 
     PTC_CREATE_UNIVERSE;
     PTC_CREATE_LAYOUT, model=3, method=6, nst=10;
@@ -334,7 +332,7 @@ QY=table(SUMM, Q2);
 
 
     PTC_START, x=myx, y=myy, px=mypx, py=mypy;
-    PTC_TRACK, deltap=0.0, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track3.', closed_orbit;
+    PTC_TRACK, deltap=DPP, icase=5, turns=256, ELEMENT_BY_ELEMENT, dump, onetable, file='track3.', closed_orbit;
     PTC_TRACK_END;
     PTC_END;
 
