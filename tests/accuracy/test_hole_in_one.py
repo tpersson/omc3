@@ -2,6 +2,7 @@ from os.path import abspath, dirname, join, isdir
 from shutil import rmtree
 import glob
 import tfs
+import numpy as np
 from omc3.hole_in_one import hole_in_one_entrypoint
 from omc3.madx_wrapper import main as madx_run
 
@@ -10,16 +11,16 @@ PLANES = ('x', 'y')
 RESULTS_PATH = abspath(join(dirname(__file__), "..", "results"))
 MODEL_PATH = abspath(join(dirname(__file__), "..", "inputs", "models", "inj_2018_b1"))
 TRACK_FILES = ['track1.one', 'track2.one', 'track3.one']
-OPTICS_MEASUREMENTS_RESULTS_FILES = [
-                 'beta_amplitude_{plane}.tfs',      # List containing all expected results files,
-                 'beta_phase_{plane}.tfs',          # at later point, possibly replaced by importing
-                 'interaction_point_{plane}.tfs',   # from global constants
-                 'kick_{plane}.tfs',
-                 'orbit_{plane}.tfs',
-                 'phase_{plane}.tfs',
-                 'special_phase_{plane}.txt',
-                 'total_phase_{plane}.tfs',
-                ]
+OPTICS_MEASUREMENTS_RESULTS_FILES = {
+                 'beta_amplitude':      'beta_amplitude_{plane}.tfs',      # List containing all expected results files,
+                 'beta_phase':          'beta_phase_{plane}.tfs',          # at later point, possibly replaced by importing
+                 'interaction_point':   'interaction_point_{plane}.tfs',   # from global constants
+                 'kick':                'kick_{plane}.tfs',
+                 'orbit':               'orbit_{plane}.tfs',
+                 'phase':               'phase_{plane}.tfs',
+                 'special_phase':       'special_phase_{plane}.txt',
+                 'total_phase':         'total_phase_{plane}.tfs',
+                }
 MEASUREMENT_FILES_EXTENSIONS = ['.tfs', '.txt',
                                 '.ampsx', '.ampsy',
                                 '.freqsx', '.freqsy',
@@ -68,7 +69,7 @@ def test_hole_in_one():
         clean=False,
     )
     fft_opt = dict(
-        autotunes="all",
+        autotunes="transverse",
         window="hann",
         turn_bits=12,
         output_bits=10,
@@ -91,9 +92,9 @@ def test_hole_in_one():
 
     hole_in_one_entrypoint({**harpy_opt, **clean_opt, **fft_opt, **optics_opt, **model_opt})
 
-    # check if all optics measuremetnts files are present
+    # check if all optics measurements files are present
     check_if_all_files_present(RESULTS_PATH,
-                               OPTICS_MEASUREMENTS_RESULTS_FILES)
+                               OPTICS_MEASUREMENTS_RESULTS_FILES.values())
 
     # check if all files from harmonic analysis are present
     check_if_all_files_present(join(RESULTS_PATH, 'lin_files'),
@@ -119,12 +120,14 @@ def test_hole_in_one():
     modelkick = tfs.read(join(MODEL_PATH, 'Tracking_actions.tfs'))
 
     # check orbit files
-
+    compare_orbit(modeltwiss, OPTICS_MEASUREMENTS_RESULTS_FILES['orbit'])
     # check kick files
 
     # check phase files
 
     # check optics files
+    compare_optics(modeltwiss, OPTICS_MEASUREMENTS_RESULTS_FILES['beta_phase'])
+    compare_optics(modeltwiss, OPTICS_MEASUREMENTS_RESULTS_FILES['beta_amplitude'])
 
     # check freq files (how & what?)
 
@@ -133,6 +136,16 @@ def test_hole_in_one():
 
     _clean_up(RESULTS_PATH)
 
+def compare_optics(modeltwiss, opticsfilename):
+    for plane in PLANES:
+        opticsfile = tfs.read(join(RESULTS_PATH, opticsfilename.format(plane=plane)))
+        assert np.max(np.abs(orbitfile[f'BET{plane.upper()}']-modeltwiss[f'BET{plane.upper()}'])) < 1E-4
+
+def compare_orbit(modeltwiss, orbitfilename):
+    for plane in PLANES:
+        orbitfile = tfs.read(join(RESULTS_PATH, orbitfilename.format(plane=plane)))
+        print(modeltwiss[~modeltwiss.NAME.isin(orbitfile.NAME)])
+        assert np.max(np.abs(orbitfile[plane.upper()]-modeltwiss[plane.upper()])) < 1E-4
 
 def compare_rdt(multipole, modelrdt):
 
