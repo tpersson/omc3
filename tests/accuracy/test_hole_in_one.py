@@ -45,6 +45,10 @@ RDT_RESULT_FILES = {
                                        'f1110_x.tfs', 'f2001_x.tfs', 'f2010_x.tfs', 'f2010_y.tfs'],
                     }
 
+PTC_RDT_NAMING = dict(AMP='GNFA_{j}_{k}_{l}_{m}_0_0',
+                      REAL='GNFC_{j}_{k}_{l}_{m}_0_0',
+                      IMAG='GNFS_{j}_{k}_{l}_{m}_0_0')
+
 
 def test_hole_in_one():
 
@@ -109,10 +113,43 @@ def test_hole_in_one():
     # check if all files from optics measurements are not empty
     [check_if_files_are_not_empty(join(RESULTS_PATH, 'rdt', multipole)) for multipole in RDT_RESULT_FILES.keys()]
 
+    # load tracking model results
+    modeltwiss = tfs.read(join(MODEL_PATH, 'twiss.dat'))
+    modelrdt = tfs.read(join(MODEL_PATH, 'ptc_rdt.tfs'))
+    modelkick = tfs.read(join(MODEL_PATH, 'Tracking_actions.tfs'))
+
+    # check orbit files
+
+    # check kick files
+
+    # check phase files
+
+    # check optics files
+
+    # check freq files (how & what?)
+
+    # check RDT
+    [compare_rdt(multipole, modelrdt) for multipole in RDT_RESULT_FILES.keys()]
+
     _clean_up(RESULTS_PATH)
 
 
-def get_all_files_in_dir(path='', fileext=["."]):
+def compare_rdt(multipole, modelrdt):
+
+    for rdtfile in RDT_RESULT_FILES[multipole]:
+        j, k, l, m = extract_rdt_indices_from_filename(rdtfile)
+
+        measured_rdt_file = tfs.read(join(RESULTS_PATH, 'rdt', multipole, rdtfile))
+
+        for key, val in PTC_RDT_NAMING.items():
+            assert measured_rdt_file[key] - modelrdt[val.format(j=j, k=k, l=l, m=m)] < 1E-2
+
+
+def extract_rdt_indices_from_filename(filename):
+    return filename[1], filename[2], filename[3], filename[4]
+
+
+def get_all_files_in_dir(path='', fileext=[]):
     return [f for ext in fileext for f in glob.glob(join(path, f'*{ext}'))]
 
 

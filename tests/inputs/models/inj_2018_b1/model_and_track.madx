@@ -209,9 +209,9 @@ MATCH;
 ENDMATCH;
 
 
-ks_mo   =   0.75*Kmax_MS/21666  ;
-kss_mo  =   0.75*Kmax_MSS/21666 ;
-ko_mo   =   0.75*Kmax_MO/21666  ;
+ks_mod   =   0.75*Kmax_MS/21666  ;
+kss_mod  =   0.75*Kmax_MSS/21666 ;
+ko_mod   =   0.75*Kmax_MO/21666  ;
 kqs_mod =   0.15*Kmax_MQS/21666 ;
 
 
@@ -249,10 +249,10 @@ USE, SEQUENCE=lhcb1;
 SAVEBETA, LABEL=STARTSEQ, PLACE=MSIA.EXIT.B1, SEQUENCE=lhcb1;
 TWISS;
 
-CREATE, TABLE=kicks, COLUMN=_TRACKFILENAME, JX, JY, QX, QY, DPP;
+CREATE, TABLE=kicks, COLUMN=TRACKFILENAME, JX, JY, QX, QY, DPP;
 
 TWISS;
-TRACKFILENAME='track1';
+TRACKFILENAME=1;
 QX=table(SUMM, Q1);
 QY=table(SUMM, Q2);
 DPP=0.0;
@@ -281,7 +281,7 @@ DPP=0.0;
 FILL, TABLE=kicks, ROW=0;
 
 TWISS;
-TRACKFILENAME='track2';
+TRACKFILENAME=2;
 QX=table(SUMM, Q1);
 QY=table(SUMM, Q2);
 DPP=0.0;
@@ -310,7 +310,7 @@ DPP=0.0;
 FILL, TABLE=kicks, ROW=0;
 
 TWISS;
-TRACKFILENAME='track3';
+TRACKFILENAME=3;
 QX=table(SUMM, Q1);
 QY=table(SUMM, Q2);
 DPP=0.0;
@@ -341,7 +341,8 @@ WRITE, TABLE=kicks, FILE="Tracking_actions.tfs";
 
 PTC_CREATE_UNIVERSE;
 PTC_CREATE_LAYOUT, MODEL = 3, METHOD = 6, NST = 1;
-PTC_TWISS, ICASE=6, NO=3, NORMAL=TRUE, TRACKRDTS=TRUE, FILE='ptc_twiss.tfs';
+PTC_TWISS, ICASE=6, NO=4, NORMAL=TRUE, TRACKRDTS=TRUE, FILE='ptc_twiss.tfs';
+SELECT, FLAG=twissrdt, PATTERN="^BPM.*B[12]$";
 WRITE, TABLE=twissrdt, file = "ptc_rdt.tfs";
 
 PTC_END;
