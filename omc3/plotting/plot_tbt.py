@@ -18,10 +18,13 @@ default_style = {
 
 
 def main(path, bpms, output_dir=None, planes="XY", bunch_id=0, datatype="lhc",
-         n_axes=None, turns=None, ylim=None, n_cols_legend=3, manual_style={}):
+         n_axes=None, turns=None, ylim=None, n_cols_legend=3, manual_style=None):
 
-    manual_style.update(default_style)
-    matplotlib.rcParams.update(manual_style)
+    style = {}
+    style.update(default_style)
+    if manual_style:
+        style.update(manual_style)
+    matplotlib.rcParams.update(style)
 
     data = handler.read_tbt(path, datatype)
 
@@ -29,8 +32,14 @@ def main(path, bpms, output_dir=None, planes="XY", bunch_id=0, datatype="lhc",
         n_axes = len(planes)
 
     figure, axs = plt.subplots(n_axes, 1)
+
+    legend_form = "{0}"
+    ylabel_form = "Position {0} [mm]"
     if n_axes == 1:
         axs = [axs] * len(planes)
+        if len(planes) > 1:
+            ylabel_form = ylabel_form.format('')
+            legend_form = "{0} {1}"
 
     turns_slice = slice(None)
     if turns:
@@ -39,15 +48,15 @@ def main(path, bpms, output_dir=None, planes="XY", bunch_id=0, datatype="lhc",
     for idx_ax, (ax, plane) in enumerate(zip(axs, planes)):
         df = data.matrices[bunch_id][plane]
         for bpm in bpms:
-            ax.plot(df.loc[bpm, turns_slice], label=bpm)
-
-        if idx_ax == 0 and n_cols_legend > 0:
-            make_top_legend(ax, n_cols_legend)
+            ax.plot(df.loc[bpm, turns_slice], label=legend_form.format(bpm, plane))
 
         ax.set_ylim(ylim)
         ax.set_xlim(_get_xlim(df, turns_slice))
         ax.set_xlabel("Turns")
-        ax.set_ylabel(f"Position {plane} [mm]")
+        ax.set_ylabel(ylabel_form.format(plane))
+
+    if n_cols_legend > 0:
+        make_top_legend(axs[0], n_cols_legend)
 
     if output_dir:
         path = Path(output_dir)
@@ -80,6 +89,13 @@ if __name__ == '__main__':
     main(
         path="/home/josch/Work/pres.phd.first_committee_meeting/data/Beam1@Turn@2018_10_30@14_22_42_956/Beam1@Turn@2018_10_30@14_22_42_956.sdds",
         bpms=['BPM.15L6.B1'],
-        output_dir="/home/josch/Work/pres.phd.first_committee_meeting/data/plot_output"
+        output_dir="/home/josch/Work/pres.phd.first_committee_meeting/data/plot_output",
+        n_axes=1,
+        manual_style={
+            u'figure.figsize': [6.4, 3.2],
+            u'font.size': 13,
+        },
+        planes="YX",
+        ylim=[-.4, 1.2]
     )
 
